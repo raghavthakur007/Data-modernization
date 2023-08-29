@@ -1,0 +1,59 @@
+PROGRAM CalculatePremium USING PolicyDB2File
+    DISPLAY "Calculating premiums for each policy..."
+    
+    FOR RecordCount FROM 1 TO 10
+        // Copy policy details from PolicyDB2Record to PolicyRecord
+        PolicyRecord.Policy-Type = PolicyDB2Record.Policy-Type
+        PolicyRecord.Age = PolicyDB2Record.Age
+        PolicyRecord.Car-Value = PolicyDB2Record.Car-Value
+        PolicyRecord.Property-Type = PolicyDB2Record.Property-Type
+        PolicyRecord.Property-Value = PolicyDB2Record.Property-Value
+        PolicyRecord.Coverage-Amount = PolicyDB2Record.Coverage-Amount
+        
+        // Determine policy-specific coverage limits and premium
+        IF PolicyRecord.Policy-Type = "CAR_INSURANCE"
+            PolicyRecord.Coverage-Limits = 100000
+            PolicyRecord.Policy-Premium = 1000
+            CALL ADDITIONAL-PREMIUM "CAR_INSURANCE"
+            PolicyDB2Record.Policy-Premium = PolicyDB2Record.Policy-Premium + PremiumAmountTemp
+        ELSE IF PolicyRecord.Policy-Type = "HOME_INSURANCE"
+            PolicyRecord.Coverage-Limits = 500000
+            PolicyRecord.Policy-Premium = 2000
+            CALL ADDITIONAL-PREMIUM "HOME_INSURANCE"
+            PolicyDB2Record.Policy-Premium = PolicyDB2Record.Policy-Premium + PremiumAmountTemp
+        ELSE IF PolicyRecord.Policy-Type = "LIFE_INSURANCE"
+            PolicyRecord.Coverage-Limits = 1000000
+            PolicyRecord.Policy-Premium = 3000
+            CALL ADDITIONAL-PREMIUM "LIFE_INSURANCE"
+            PolicyDB2Record.Policy-Premium = PolicyDB2Record.Policy-Premium + PremiumAmountTemp
+        ELSE
+            PolicyRecord.Coverage-Limits = 0
+            PolicyRecord.Policy-Premium = 0
+        END IF
+        
+        // Update policy details in PolicyDB2Record
+        PolicyDB2Record.Coverage-Limits = PolicyRecord.Coverage-Limits
+        PolicyDB2Record.Policy-Premium = PolicyRecord.Policy-Premium
+    END FOR
+    
+    DISPLAY "Premiums calculated."
+    EXIT PROGRAM
+
+ADDITIONAL-PREMIUM policyType
+    PremiumAmountTemp = 300 // Additional premium based on age
+    
+    IF Age < 25
+        PremiumAmountTemp = PremiumAmountTemp + 200
+    ELSE IF Age < 41
+        PremiumAmountTemp = PremiumAmountTemp + 100
+    ELSE IF Age <= 60
+        PremiumAmountTemp = PremiumAmountTemp + 400
+    
+    // Additional premium based on car value
+    PremiumAmountTemp = PremiumAmountTemp + 0.05
+    
+    IF Car-Value < 20000
+        PremiumAmountTemp = PremiumAmountTemp + 0.08
+    ELSE IF Car-Value < 50000
+        PremiumAmountTemp = PremiumAmountTemp + 0.10
+    END ADDITIONAL-PREMIUM
