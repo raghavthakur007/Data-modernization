@@ -1,0 +1,87 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. PolicyCreation.
+AUTHOR. YourName.
+DATE-WRITTEN. 2023-07-21.
+DATE-COMPILED.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 PolicyRecord.
+   05 Policy-Number      
+   05 Policy-Holder-Name 
+   05 Premium-Amount     
+   05 Policy-Type        
+   05 Coverage-Limits    
+   05 Policy-Premium     
+   05 Age                
+   05 Car-Value          
+   05 Property-Type      
+   05 Property-Value     
+   05 Coverage-Amount    
+
+LINKAGE SECTION.
+01 PolicyDB2File.
+   05 PolicyDB2Record OCCURS 10 TIMES.
+      10 Policy-Number      
+      10 Policy-Holder-Name 
+      10 Premium-Amount     
+      10 Policy-Type        
+      10 Coverage-Limits    
+      10 Policy-Premium     
+      10 Age                
+      10 Car-Value          
+      10 Property-Type      
+      10 Property-Value     
+      10 Coverage-Amount    
+
+PROCEDURE DIVISION USING PolicyDB2File.
+    PERFORM VARYING Record-Count FROM 1 BY 1
+      UNTIL Record-Count > 10
+      // Copy data from PolicyDB2File to PolicyRecord
+      MOVE Policy-Type TO PolicyRecord.Policy-Type
+      MOVE Age TO PolicyRecord.Age
+      MOVE Car-Value TO PolicyRecord.Car-Value
+      MOVE Property-Type TO PolicyRecord.Property-Type
+      MOVE Property-Value TO PolicyRecord.Property-Value
+      MOVE Coverage-Amount TO PolicyRecord.Coverage-Amount
+      
+      // Calculate additional premium
+      PERFORM ADDITIONAL-PREMIUM
+      
+      IF PolicyRecord.Policy-Type = "CAR_INSURANCE"
+          MOVE 100000 TO PolicyRecord.Coverage-Limits
+          MOVE 1000 TO PolicyRecord.Policy-Premium
+          
+          // Apply additional premium for car insurance
+          COMPUTE Policy-Premium(Record-Count) = Policy-Premium(Record-Count) + Premium-Amount-Temp
+      ELSE IF PolicyRecord.Policy-Type = "HOME_INSURANCE"
+          MOVE 500000 TO PolicyRecord.Coverage-Limits
+          MOVE 2000 TO PolicyRecord.Policy-Premium
+          
+          // Apply additional premium for home insurance
+          COMPUTE Policy-Premium(Record-Count) = Policy-Premium(Record-Count) + Premium-Amount-Temp
+      ELSE IF PolicyRecord.Policy-Type = "LIFE_INSURANCE"
+          MOVE 1000000 TO PolicyRecord.Coverage-Limits
+          MOVE 3000 TO PolicyRecord.Policy-Premium
+          
+          // Apply additional premium for life insurance
+          COMPUTE Policy-Premium(Record-Count) = Policy-Premium(Record-Count) + Premium-Amount-Temp
+      ELSE
+          MOVE 0 TO PolicyRecord.Coverage-Limits
+          MOVE 0 TO PolicyRecord.Policy-Premium
+      END-IF
+      // Copy values back to PolicyDB2Record
+      MOVE PolicyRecord.Coverage-Limits TO Coverage-Limits(Record-Count)
+      MOVE PolicyRecord.Policy-Premium TO Policy-Premium(Record-Count)
+    END-PERFORM.
+    EXIT PROGRAM.
+
+ADDITIONAL-PREMIUM SECTION.
+    ADD 300 TO Premium-Amount-Temp  // Additional premium based on age
+    IF Age < 25
+        ADD 200 TO Premium-Amount-Temp
+    ELSE IF Age < 41
+        ADD 100 TO Premium-Amount-Temp
+    ELSE IF Age <= 60
+        ADD 400 TO Premium-Amount-Temp
+        
+    ADD 0.05
