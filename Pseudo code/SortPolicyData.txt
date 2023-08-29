@@ -1,0 +1,46 @@
+PROCEDURE MergeSort(arr, left, right)
+    IF left < right THEN
+        mid = (left + right) / 2
+        MergeSort(arr, left, mid)
+        MergeSort(arr, mid + 1, right)
+        Merge(arr, left, mid, right)
+
+PROCEDURE Merge(arr, left, mid, right)
+    temp_arr = COPY_OF(arr[left:right+1])
+    i = left
+    j = mid + 1
+    k = 0
+
+    WHILE i <= mid AND j <= right DO
+        IF arr[i].Policy_Number <= arr[j].Policy_Number THEN
+            temp_arr[k] = arr[i]
+            i = i + 1
+        ELSE
+            temp_arr[k] = arr[j]
+            j = j + 1
+        END IF
+        k = k + 1
+
+    WHILE i <= mid DO
+        temp_arr[k] = arr[i]
+        i = i + 1
+        k = k + 1
+
+    WHILE j <= right DO
+        temp_arr[k] = arr[j]
+        j = j + 1
+        k = k + 1
+
+    FOR m = left TO right DO
+        arr[m] = temp_arr[m - left]
+
+FUNCTION SortPolicyData(policy_data)
+    MergeSort(policy_data, 0, length(policy_data) - 1)
+
+// Sample usage
+policy_data = [...]
+SortPolicyData(policy_data)
+
+FOR EACH record IN policy_data DO
+    PRINT record.Policy_Number
+END FOR

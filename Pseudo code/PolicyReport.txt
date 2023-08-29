@@ -1,0 +1,43 @@
+PROCEDURE CalculateAdditionalPremium(age, car_value)
+    additional_premium = 0
+    IF age < 25 THEN
+        additional_premium = additional_premium + 300
+    ELSE IF age < 41 THEN
+        additional_premium = additional_premium + 200
+    ELSE IF age <= 60 THEN
+        additional_premium = additional_premium + 400
+
+    IF car_value < 20000 THEN
+        additional_premium = additional_premium + 0.05
+    ELSE IF car_value < 50000 THEN
+        additional_premium = additional_premium + 0.08
+
+    RETURN additional_premium
+
+PROCEDURE GeneratePolicySummaryReport(policy_data)
+    total_policies = length(policy_data)
+    total_premiums = 0
+    total_claims = 0
+    total_rejected_claims = 0
+
+    FOR EACH policy IN policy_data DO
+        total_premiums = total_premiums + policy.Policy_Premium
+        IF policy.Claim_Status = "CLAIMED" THEN
+            total_claims = total_claims + 1
+            IF policy.Claim_Status = "REJECTED" THEN
+                total_rejected_claims = total_rejected_claims + 1
+
+    RETURN total_policies, total_premiums, total_claims, total_rejected_claims
+
+PROCEDURE WritePolicySummaryReportToFile(report_data)
+    OPEN PolicyIMSFile FOR OUTPUT
+    WRITE "Total Policies: " + report_data.Total_Policies TO PolicyIMSFile
+    WRITE "Total Premiums: " + report_data.Total_Premiums TO PolicyIMSFile
+    WRITE "Total Claims: " + report_data.Total_Claims TO PolicyIMSFile
+    WRITE "Total Rejected Claims: " + report_data.Total_Rejected_Claims TO PolicyIMSFile
+    CLOSE PolicyIMSFile
+
+// Sample usage
+policy_data = [...]
+GeneratePolicySummaryReport(policy_data)
+WritePolicySummaryReportToFile(policy_summary_report)
