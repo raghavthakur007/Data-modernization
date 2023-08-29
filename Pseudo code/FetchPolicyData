@@ -1,0 +1,58 @@
+PROGRAM FetchPolicyData USING PolicyDB2File, WS-Sort-Buffer
+    DISPLAY "Fetching policy data from DB2..."
+
+    FOR RecordCount FROM 1 TO 10
+        // Clear fields in PolicyDB2Record for each policy
+        PolicyDB2Record(RecordCount).Policy-Number = ""
+        PolicyDB2Record(RecordCount).Policy-Holder-Name = ""
+        PolicyDB2Record(RecordCount).Premium-Amount = 0
+        PolicyDB2Record(RecordCount).Policy-Type = ""
+        PolicyDB2Record(RecordCount).Coverage-Limits = 0
+        PolicyDB2Record(RecordCount).Policy-Premium = 0
+        PolicyDB2Record(RecordCount).Age = 0
+        PolicyDB2Record(RecordCount).Car-Value = 0
+        PolicyDB2Record(RecordCount).Property-Type = ""
+        PolicyDB2Record(RecordCount).Property-Value = 0
+        PolicyDB2Record(RecordCount).Coverage-Amount = 0
+        
+        // Simulate fetching random data for each policy record
+        PolicyDB2Record(RecordCount).Policy-Number = "POLICY00" & RecordCount
+        PolicyDB2Record(RecordCount).Policy-Holder-Name = "Policy Holder " & RecordCount
+        PolicyDB2Record(RecordCount).Premium-Amount = RecordCount * 100.50
+        PolicyDB2Record(RecordCount).Policy-Type = RANDOM-POLICY-TYPE()
+        PolicyDB2Record(RecordCount).Coverage-Limits = RecordCount * 1000
+        PolicyDB2Record(RecordCount).Policy-Premium = RecordCount * 200.75
+        PolicyDB2Record(RecordCount).Age = RecordCount
+        PolicyDB2Record(RecordCount).Car-Value = RecordCount * 5000.50
+        PolicyDB2Record(RecordCount).Property-Type = RANDOM-PROPERTY-TYPE()
+        PolicyDB2Record(RecordCount).Property-Value = RecordCount * 10000.25
+        PolicyDB2Record(RecordCount).Coverage-Amount = RecordCount * 5000
+    END FOR
+    
+    DISPLAY "Policy data fetched."
+    EXIT PROGRAM
+
+FUNCTION RANDOM(max)
+    // Generate a random number between 1 and max
+    RETURN random number between 1 and max
+    END FUNCTION
+
+RANDOM-POLICY-TYPE
+    SET Random-Policy-Type TO FUNCTION RANDOM(3)
+    IF Random-Policy-Type = 1
+        RETURN "CAR_INSURANCE"
+    ELSE IF Random-Policy-Type = 2
+        RETURN "HOME_INSURANCE"
+    ELSE
+        RETURN "LIFE_INSURANCE"
+    END IF
+
+RANDOM-PROPERTY-TYPE
+    SET Random-Property-Type TO FUNCTION RANDOM(3)
+    IF Random-Property-Type = 1
+        RETURN "Condo"
+    ELSE IF Random-Property-Type = 2
+        RETURN "Townhouse"
+    ELSE
+        RETURN "Single-family home"
+    END IF
