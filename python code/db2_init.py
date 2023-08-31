@@ -1,7 +1,17 @@
+import oracledb
+import getpass
 def initialize_db2_connection():
-    print("Initializing DB2 connection...")
+    # userpwd = getpass.getpass("Enter password :")
+    userpwd = 'admin'
     # Add your logic to initialize the DB2 connection here
+    print("Initializing DB2 connection...")
+    pool = oracledb.create_pool(user="system", password=userpwd, dsn="localhost:1521/XEPDB1",
+                            min=1, max=5, increment=1)
 
+    with pool.acquire() as connection:
+        with connection.cursor() as cursor:
+            for result in cursor.execute("SELECT * from all_users"):
+                print(result)
     # Simulate initializing the DB2 connection (random values)
     db2_status = "DB2_CONNECTION_SUCCESSFUL"
 
