@@ -1,0 +1,58 @@
+Program: ClaimProcessing
+
+// Define data structures
+Structure PolicyRecord:
+    PolicyNumber: String
+    PolicyHolderName: String
+    PremiumAmount: Decimal
+    PolicyType: String
+    CoverageLimits: Decimal
+    PolicyPremium: Decimal
+    ClaimStatus: String
+
+Structure ClaimRecord:
+    PolicyNumber: String
+    DateOfLoss: String
+    CauseOfLoss: String
+    AmountOfLoss: Decimal
+
+Procedure ProcessClaim(PolicyDB2File, ClaimRecord):
+    Initialize RecordCount to 1
+
+    // Loop through policy records
+    While RecordCount <= 10:
+        If PolicyDB2Record[RecordCount].PolicyNumber == ClaimRecord.PolicyNumber:
+            PolicyRecord.CoverageLimits = PolicyDB2Record[RecordCount].CoverageLimits
+            PolicyRecord.PolicyPremium = PolicyDB2Record[RecordCount].PolicyPremium
+        End If
+
+        Increment RecordCount by 1
+
+    End While
+
+    If ClaimRecord.DateOfLoss > "12/31/2023":
+        Set ClaimStatus to "REJECT"
+    Else:
+        PolicyRecord.PolicyType = ClaimRecord.CauseOfLoss
+
+        If PolicyRecord.PolicyType == "FIRE":
+            Set ClaimRecord.AmountOfLoss to 5000
+        ElseIf PolicyRecord.PolicyType == "THEFT":
+            Set ClaimRecord.AmountOfLoss to 10000
+        ElseIf PolicyRecord.PolicyType == "FLOOD":
+            Set ClaimRecord.AmountOfLoss to 20000
+        Else:
+            Set ClaimRecord.AmountOfLoss to 0
+            Set ClaimStatus to "REJECT"
+        End If
+
+        If ClaimRecord.AmountOfLoss <= PolicyRecord.CoverageLimits:
+            Set ClaimStatus to "PAY"
+        Else:
+            Set ClaimStatus to "REJECT"
+        End If
+
+    End If
+
+    Exit Program
+End Procedure

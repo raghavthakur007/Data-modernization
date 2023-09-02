@@ -1,0 +1,60 @@
+Program: GenerateReport
+
+Procedure GeneratePolicySummaryReport(PolicyRecord, PolicySummaryReport):
+    Display "Generating policy summary report..."
+    
+    // Calculate total premiums
+    PremiumAmountTemp = PolicyRecord.PremiumAmount
+    PolicySummaryReport.TotalPremiums += PremiumAmountTemp
+    
+    // Increment total policies
+    PolicySummaryReport.TotalPolicies += 1
+    
+    // Check claim status and update counts
+    If PolicyRecord.ClaimStatus == "PAY":
+        PolicySummaryReport.TotalClaims += 1
+    Else:
+        PolicySummaryReport.TotalRejectedClaims += 1
+    End If
+    
+    // Prepare a record for PolicyIMSFile (details not provided)
+    PolicyIMSRecord.PolicyNumber = PolicyRecord.PolicyNumber
+    PolicyIMSRecord.PolicyData = PolicyRecord.PolicyHolderName
+    PolicyIMSRecord.PolicyType = PolicyRecord.PolicyType
+    PolicyIMSRecord.CoverageLimits = PolicyRecord.CoverageLimits
+    PolicyIMSRecord.PolicyPremium = PolicyRecord.PolicyPremium
+    PolicyIMSRecord.Age = PolicyRecord.Age
+    PolicyIMSRecord.CarValue = PolicyRecord.CarValue
+    PolicyIMSRecord.PropertyType = PolicyRecord.PropertyType
+    PolicyIMSRecord.PropertyValue = PolicyRecord.PropertyValue
+    PolicyIMSRecord.CoverageAmount = PolicyRecord.CoverageAmount
+    
+    // Write PolicyIMSRecord to PolicyIMSFile (details not provided)
+    WriteRecordToPolicyIMSFile(PolicyIMSRecord)
+    
+    Display "Policy summary report generated."
+End Procedure
+
+// Entry point
+Main:
+    Declare PolicyRecord as PolicyDataStructure
+    Declare PolicySummaryReport as PolicySummaryStructure
+    
+    Initialize PolicySummaryReport fields to zero
+    
+    // Loop through policy records (pseudo loop)
+    While there are more policy records to process:
+        Read the next policy record into PolicyRecord
+        
+        // Generate summary report for the current policy record
+        Call GeneratePolicySummaryReport(PolicyRecord, PolicySummaryReport)
+    End While
+    
+    // Display summary report statistics
+    Display "Total Policies: " + PolicySummaryReport.TotalPolicies
+    Display "Total Premiums: " + PolicySummaryReport.TotalPremiums
+    Display "Total Claims: " + PolicySummaryReport.TotalClaims
+    Display "Total Rejected Claims: " + PolicySummaryReport.TotalRejectedClaims
+    
+    // Exit the program
+    ExitProgram

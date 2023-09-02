@@ -1,0 +1,36 @@
+PROGRAM MainProgram
+BEGIN
+    DECLARE PolicyDB2File
+    DECLARE PolicyIMSFile
+    DECLARE OtherFiles
+
+    DECLARE PolicyRecords
+    DECLARE PolicySummary
+    DECLARE PolicyReportRecords
+
+    INITIALIZE PolicySummary
+
+    -- Step 1: Initialize DB2 Connection
+    CALL InitializeDB2Connection()
+
+    -- Step 2: Fetch Policy Data
+    CALL FetchPolicyData(PolicyDB2File, PolicyRecords)
+
+    -- Step 3: Process Policy Data
+    FOR EACH PolicyRecord IN PolicyRecords
+        CALL CalculatePremium(PolicyRecord)
+        CALL GeneratePolicyReportRecord(PolicyRecord, PolicyReportRecords)
+        UPDATE PolicySummary
+    END FOR
+
+    -- Step 4: Generate Policy Summary Report
+    CALL GeneratePolicySummaryReport(PolicySummary)
+
+    -- Step 5: Write Report to PolicyIMSFile
+    CALL WriteReportToIMSFile(PolicyIMSFile, PolicyReportRecords)
+
+    -- Step 6: Close DB2 Connection
+    CALL CloseDB2Connection()
+
+    -- End of Program
+END

@@ -1,0 +1,48 @@
+Program: PolicyRenewal
+
+Procedure RenewPolicies(PolicyDB2File):
+    // Loop through policy records
+    For each Record-Count in PolicyDB2File:
+        // Retrieve policy details from PolicyDB2File
+        Get Policy-Number, Policy-Holder-Name, Premium-Amount, Policy-Type,
+            Coverage-Limits, and Policy-Premium from PolicyDB2File[Record-Count]
+
+        // Check policy type and set renewal values
+        If Policy-Type == "CAR_INSURANCE":
+            Set Coverage-Limits to 200000
+            Set Policy-Premium to 1200
+        Else If Policy-Type == "HOME_INSURANCE":
+            Set Coverage-Limits to 600000
+            Set Policy-Premium to 2400
+        Else If Policy-Type == "LIFE_INSURANCE":
+            Set Coverage-Limits to 1200000
+            Set Policy-Premium to 3600
+        Else:
+            Set Coverage-Limits to 0
+            Set Policy-Premium to 0
+        End If
+
+        // Update the policy renewal details
+        Set Coverage-Limits in PolicyDB2File[Record-Count] to Coverage-Limits
+        Set Policy-Premium in PolicyDB2File[Record-Count] to Policy-Premium
+
+    End For
+
+    // Exit the program
+    Exit Program
+End Procedure
+
+// Entry point
+Main:
+    Declare PolicyDB2File as PolicyDB2Record array of size 10
+
+    // Initialize PolicyDB2File with data (not shown in the provided code)
+
+    // Renew policies based on the data in PolicyDB2File
+    Call RenewPolicies(PolicyDB2File)
+
+    // Display a message indicating successful policy renewal
+    Display "Policy renewal completed."
+
+    // Exit the program
+    Exit Program
